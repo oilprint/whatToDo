@@ -6,27 +6,27 @@ const lightbox = new PhotoSwipeLightbox({
 });
 
 
-document.addEventListener('click', (e) => {
-  const target = e.target;
-  if(target.classList.contains('action-images')) {
+// document.addEventListener('click', (e) => {
+//   const target = e.target;
+//   if(target.classList.contains('action-images')) {
     
-    /* Ваш код тут */
+//     /* Ваш код тут */
 
 
-    lightbox.addFilter('numItems', () => {
-      return /* Треба повернути кількість слайдів */;
-    });
+//     lightbox.addFilter('numItems', () => {
+//       return /* Треба повернути кількість слайдів */;
+//     });
 
-    lightbox.addFilter('itemData', (itemData, index) => {
-      return {
-        src: /* вказати шлях до зображення */, 
-        width: 500,
-        height: 500
-      };
-    });
+//     lightbox.addFilter('itemData', (itemData, index) => {
+//       return {
+//         src: /* вказати шлях до зображення */, 
+//         width: 500,
+//         height: 500
+//       };
+//     });
       
-    lightbox.init();
-    lightbox.loadAndOpen(0);
+//     lightbox.init();
+//     lightbox.loadAndOpen(0);
 
-  }
-})
+//   }
+// })
