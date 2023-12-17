@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="uk" class="dark">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Don't get bored!</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💡</text></svg>">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe.min.css" integrity="sha512-LFWtdAXHQuwUGH9cImO9blA3a3GfQNkpF2uRlhaOpSbDevNyK1rmAjs13mtpjvWyi+flP7zYWboqY+8Mkd42xA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body class="antialiased text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900">
+        <header class="header pt-6">
+            <div class="container mx-auto px-6">
+                <h1 class="text-4xl font-bold mb-10 text-center">
+                    💡 Use it when you don't know what to do
+                </h1>
+            </div>
+        </header>
+        <main>
+            <div class="container mx-auto px-6">
+                <div class="flex flex-row flex-wrap gap-4 items-start justify-center">
+                    <div class="left-side bg-gray-800 text-white p-8 max-w-sm rounded-md transition duration-300">
+                        <h2 class="title text-2xl font-bold mb-4">Number of participants:</h2>
+                        <ul class="participants flex mb-6">
+                            <li class="radio-group mr-4">
+                                <input
+                                    class="radio-input peer sr-only"
+                                    type="radio"
+                                    name="participants"
+                                    id="p[1]"
+                                    value="1"
+                                    checked
+                                >
+                                <label class="radio-label block bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded cursor-pointer transition duration-300 ease-in-out peer-checked:bg-blue-700" for="p[1]">1</label>
+                            </li>
+                            <li class="radio-group mr-4">
+                                <input
+                                    class="radio-input peer sr-only"
+                                    type="radio"
+                                    name="participants"
+                                    id="p[2]"
+                                    value="2"
+                                >
+                                <label class="radio-label block bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded cursor-pointer transition duration-300 ease-in-out peer-checked:bg-blue-700" for="p[2]">
+                                    2
+                                </label>
+                            </li>
+                            <li class="radio-group mr-4">
+                                <input
+                                    class="radio-input peer sr-only"
+                                    type="radio"
+                                    name="participants"
+                                    id="p[3]"
+                                    value="3"
+                                >
+                                <label class="radio-label block bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded cursor-pointer transition duration-300 ease-in-out peer-checked:bg-blue-700" for="p[3]">3</label>
+                            </li>
+                            <li class="radio-group mr-4">
+                                <input
+                                    class="radio-input peer sr-only"
+                                    type="radio"
+                                    name="participants"
+                                    id="p[4]"
+                                    value="4"
+                                >
+                                <label class="radio-label block bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded cursor-pointer transition duration-300 ease-in-out peer-checked:bg-blue-700" for="p[4]">4</label>
+                            </li>
+                            <li class="radio-group">
+                                <input
+                                    class="radio-input peer sr-only"
+                                    type="radio"
+                                    name="participants"
+                                    id="p[5]"
+                                    value="5"
+                                >
+                                <label class="radio-label block bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded cursor-pointer transition duration-300 ease-in-out peer-checked:bg-blue-700" for="p[5]">5</label>
+                            </li>
+                        </ul>
+                        <div class="mb-6">
+                            <h2 class="title text-2xl font-bold mb-4">Activity type:</h2>
+                            <ul class="activity-type flex flex-wrap gap-1 mb-6">
+                                <li class="radio-group">
+                                    <input
+                                        class="radio-input peer sr-only"
+                                        type="radio"
+                                        name="type"
+                                        id="t[0]"
+                                        value="all"
+                                        checked
+                                    >
+                                    <label class="radio-label block bg-gray-600 hover:bg-gray-700 text-white py-1 px-4 rounded cursor-pointer transition duration-300 ease-in-out peer-checked:bg-emerald-600 text-sm" for="t[0]">All</label>
+                                </li>
+                                <li class="radio-group">
+                                    <input
+                                        class="radio-input peer sr-only"
+                                        type="radio"
+                                        name="type"
+                                        id="t[1]"
+                                        value="education"
+                                    >
+                                    <label class="radio-label block bg-gray-600 hover:bg-gray-700 text-white py-1 px-4 rounded cursor-pointer transition duration-300 ease-in-out peer-checked:bg-emerald-600 text-sm" for="t[1]">Education</label>
+                                </li>
+                                <li class="radio-group">
+                                    <input
+                                        class="radio-input peer sr-only"
+                                        type="radio"
+                                        name="type"
+                                        id="t[2]"
+                                        value="recreational"
+                                    >
+                                    <label class="radio-label block bg-gray-600 hover:bg-gray-700 text-white py-1 px-4 rounded cursor-pointer transition duration-300 ease-in-out peer-checked:bg-emerald-600 text-sm" for="t[2]">
+                                        Recreational
+                                    </label>
+                                </li>
+                                <li class="radio-group">
+                                    <input
+                                        class="radio-input peer sr-only"
+                                        type="radio"
+                                        name="type"
+                                        id="t[3]"
+                                        value="social"
+                                    >
+                                    <label class="radio-label block bg-gray-600 hover:bg-gray-700 text-white py-1 px-4 rounded cursor-pointer transition duration-300 ease-in-out peer-checked:bg-emerald-600 text-sm" for="t[3]">Social</label>
+                                </li>
+                                <li class="radio-group">
+                                    <input
+                                        class="radio-input peer sr-only"
+                                        type="radio"
+                                        name="type"
+                                        id="t[4]"
+                                        value="diy"
+                                    >
+                                    <label class="radio-label block bg-gray-600 hover:bg-gray-700 text-white py-1 px-4 rounded cursor-pointer transition duration-300 ease-in-out peer-checked:bg-emerald-600 text-sm" for="t[4]">Diy</label>
+                                </li>
+                                <li class="radio-group">
+                                    <input
+                                        class="radio-input peer sr-only"
+                                        type="radio"
+                                        name="type"
+                                        id="t[5]"
+                                        value="charity"
+                                    >
+                                    <label class="radio-label block bg-gray-600 hover:bg-gray-700 text-white py-1 px-4 rounded cursor-pointer transition duration-300 ease-in-out peer-checked:bg-emerald-600 text-sm" for="t[5]">Charity</label>
+                                </li>
+                                <li class="radio-group">
+                                    <input
+                                        class="radio-input peer sr-only"
+                                        type="radio"
+                                        name="type"
+                                        id="t[6]"
+                                        value="cooking"
+                                    >
+                                    <label class="radio-label block bg-gray-600 hover:bg-gray-700 text-white py-1 px-4 rounded cursor-pointer transition duration-300 ease-in-out peer-checked:bg-emerald-600 text-sm" for="t[6]">Cooking</label>
+                                </li>
+                                <li class="radio-group">
+                                    <input
+                                        class="radio-input peer sr-only"
+                                        type="radio"
+                                        name="type"
+                                        id="t[7]"
+                                        value="relaxation"
+                                    >
+                                    <label class="radio-label block bg-gray-600 hover:bg-gray-700 text-white py-1 px-4 rounded cursor-pointer transition duration-300 ease-in-out peer-checked:bg-emerald-600 text-sm" for="t[7]">Relaxation</label>
+                                </li>
+                                <li class="radio-group">
+                                    <input
+                                        class="radio-input peer sr-only"
+                                        type="radio"
+                                        name="type"
+                                        id="t[8]"
+                                        value="music"
+                                    >
+                                    <label class="radio-label block bg-gray-600 hover:bg-gray-700 text-white py-1 px-4 rounded cursor-pointer transition duration-300 ease-in-out peer-checked:bg-emerald-600 text-sm" for="t[8]">Music</label>
+                                </li>
+                                <li class="radio-group">
+                                    <input
+                                        class="radio-input peer sr-only"
+                                        type="radio"
+                                        name="type"
+                                        id="t[9]"
+                                        value="busywork"
+                                    >
+                                    <label class="radio-label block bg-gray-600 hover:bg-gray-700 text-white py-1 px-4 rounded cursor-pointer transition duration-300 ease-in-out peer-checked:bg-emerald-600 text-sm" for="t[9]">Busywork</label>
+                                </li>
+                            </ul>
+                        </div>
+                        <button class="btn js_getActivity bg-pink-500 hover:bg-pink-700  cursor-pointer transition duration-300 ease-in-out text-white py-2 px-4 rounded w-full" type="button">Get Activity</button>
+                        <button
+                            disabled
+                            type="button"
+                            display=""
+                            class="btn js_loading hidden bg-pink-500 hover:bg-pink-700  cursor-pointer transition duration-300 ease-in-out text-white py-2 px-4 rounded w-full"
+                        >
+                            <svg
+                                aria-hidden="true"
+                                role="status"
+                                class="inline w-4 h-4 mr-3 text-white animate-spin"
+                                viewBox="0 0 100 101"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"/>
+                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"/>
+                            </svg>
+                            Loading...
+                        </button>
+                        <div class="activity-card bg-gray-700 text-white p-4 rounded-md transition duration-300 ease-in-out">
+                            <div class="activity-card__content">
+                                <h2 class="title text-2xl font-bold mb-4">Activity item:</h2>
+                                <div class="p-2 pl-4 bg-sky-950 rounded-md mb-3">
+                                    <div class="flex gap-4 justify-between   name text-md">
+                                        <p class="activity-text">Activity text</p>
+                                        <button type="button" class="js_translate translate-btn py-1 px-1 bg-blue-500 hover:bg-blue-700 cursor-pointer transition duration-300 ease-in-out rounded-md" title="Translate"></button>
+                                    </div>
+                                    <p class="translated-text mt-2 hidden"></p>
+                                </div>
+                                <div class="pictures">
+                                    <h3 class="title text-1xl font-bold mb-4">Associative pictures:</h3>
+                                    <button type="button" class="js_getImages py-1 px-2 block m-auto bg-teal-500 hover:bg-teal-700 cursor-pointer transition duration-300 ease-in-out rounded-md" title="">
+                                        Load images
+                                    </button>
+                                    <button
+                                        disabled
+                                        type="button"
+                                        display=""
+                                        class="hidden js_loadingImages py-1 px-2 block m-auto bg-teal-500 hover:bg-teal-700 cursor-pointer transition duration-300 ease-in-out rounded-md"
+                                    >
+                                        <svg
+                                            aria-hidden="true"
+                                            role="status"
+                                            class="inline w-4 h-4 mr-3 text-white animate-spin"
+                                            viewBox="0 0 100 101"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"/>
+                                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"/>
+                                        </svg>
+                                        Search for images...
+                                    </button>
+                                    <div class="images grid grid-cols-2 gap-6 mb-4"></div>
+                                </div>
+                            </div>
+                            <button class="btn btn-green js_addToList bg-green-500 hover:bg-green-700 cursor-pointer transition duration-300 disabled:bg-slate-500 disabled:text-slate-900 disabled:border-slate-200 ease-in-out text-white py-2 px-4 rounded-md w-full">Add to my list</button>
+                        </div>
+                        <div class="error-card bg-gray-700 text-white p-4 mt-2 rounded-md hidden">
+                            <p class="error-card-text p-2 pl-4 bg-sky-950 rounded-md mb-3"></p>
+                        </div>
+                    </div>
+                    <div class="right-side bg-gray-800 text-white p-8 max-w-sm rounded-md hidden">
+                        <h2 class="title text-2xl font-bold mb-4">Your activities:</h2>
+                        <div class="search">
+                            <input class="search__input" type="search" placeholder="Search...">
+                        </div>
+                        <ul class="filters"></ul>
+                        <ul class="activity-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script type="module" src="photo.js"></script>
+        <script src="main.js"></script>
+    </body>
+</html>

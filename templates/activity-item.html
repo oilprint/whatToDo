@@ -1,0 +1,22 @@
+<li class="activity-item ${activity type}">
+      
+  <div class="activity-data">
+      <button type="button" class="js_filterByType icon icon-type" title="sort by activity type">
+        ${activity type}
+      </button>
+      <button type="button" class="js_filterByParticipants icon icon-participants" title="sort by participants">
+        ${activity participants}
+      </button>
+  </div>
+  <div class="activity-actions">
+    <!-- місце для кнопки з шаблону show-translation, якщо є переклад -->
+    <!-- місце для кнопки з шаблону show-images, якщо є зображення -->
+    <button button class="icon icon-remove activity-action action-remove" type="button" title="remove it">
+      <span class="sr-only">Remove it</span>
+    </button>
+  </div>
+  <div class="activity-name">
+    ${activity text}
+  </div>
+
+</li>
