@@ -13,7 +13,7 @@ const activityCardList = document.querySelector('.activity-list');
 const errorCard = document.querySelector('.error-card');
 const imageList = document.querySelector('.images');
 let activityAPI, textToTranslate;
-const allActivities = JSON.parse(localStorage.getItem('allActivity')) || [];
+let allActivities = JSON.parse(localStorage.getItem('allActivity')) || [];
 
 
 
@@ -217,20 +217,30 @@ function updateActivityCardList() {
   })
 }
 
-function checkOfParametrs(item, key) {
+function checkOfTranslate(item) {
   let result;
-  if (item[key].length > 0) {
+  if (item.translate.length > 0) {
     result = '<button type="button" class="icon icon-translate activity-action action-translate" title="show/hide translation"></button>'
   } else {
     result = '';
   }
   return result;
-}
+};
+
+// function checkOfImages(item) {
+//   let result;
+//   if (item.images.length > 0) {
+//     result = '<button type="button" class="icon icon-images activity-action action-images" title="show images"></button>'
+//   } else {
+//     result = '';
+//   }
+//   return result;
+// };
 
 function addActivityOnPage(item) {
 
   activityCardList.insertAdjacentHTML('beforeend', `
-    <li class="activity-item ${item.type}">
+    <li class="activity-item ${item.type}"  id=${item.id}>
         
       <div class="activity-data">
           <button type="button" class="js_filterByType icon icon-type" title="sort by activity type">
@@ -241,7 +251,8 @@ function addActivityOnPage(item) {
           </button>
       </div>
       <div class="activity-actions">
-        ${checkOfParametrs(item, 'translate')}
+        ${checkOfTranslate(item)}
+        
         <button button class="icon icon-remove activity-action action-remove" type="button" title="remove it">
           <span class="sr-only">Remove it</span>
         </button>
@@ -265,25 +276,42 @@ function handlerAddToList(targetBtn) {
     updateLocalStorage(allActivities);
     console.log(newActivity);
     addActivityOnPage(newActivity);
-}
+};
+
+function removeActivity(idAct) {
+  allActivities = allActivities.filter(item => item.id !== idAct);
+  updateLocalStorage(allActivities);
+  updateActivityCardList();
+};
 
 document.addEventListener('click', (e) => {
   const target = e.target;
-  if (target.classList.contains('js_getActivity')) {
-     
-    
+  if (target.classList.contains('js_getActivity')) { 
     handlerGetActivity();
-  }  else if (target.classList.contains('js_translate')) {
+  };
+
+  if (target.classList.contains('js_translate')) {
     handlerGetTranslate();
-  }  else if (target.classList.contains('js_getImages')) {
+  };
+
+  if (target.classList.contains('js_getImages')) {
     document.querySelector('.js_getImages').classList.add('hidden');
     document.querySelector('.js_loadingImages').classList.remove('hidden');
     document.querySelector('.js_addToList').setAttribute('disabled', true);
     getImagesFromAPI();
+  };
 
-  } else if (target.classList.contains('js_addToList')) {
-    
+  if (target.classList.contains('js_addToList')) { 
     handlerAddToList(target);
+  };
 
-  }
+  if (target.classList.contains('action-remove')) {
+    const id = +target.closest('.activity-item').id;
+    removeActivity(id);
+  };
+
+
+
+
+
 });
