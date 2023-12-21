@@ -15,12 +15,58 @@ const imageList = document.querySelector('.images');
 let activityAPI, textToTranslate;
 let allActivities = JSON.parse(localStorage.getItem('allActivity')) || [];
 
+const filterSettings =  JSON.parse(localStorage.getItem('filters')) || {
+  'participants': '',
+  'type': '',
+  'search': ''
+};
+
+function updateFilters(target) {
+  filterSettings[target.name] = target.value;
+  localStorage.setItem('filters', JSON.stringify(filterSettings));
+};
+
+function addFilterItem(target) {
+  document.querySelector('.filters').insertAdjacentHTML('beforeend', `
+  <li class="filters__item" data-filter=${target.name}>
+  <div class="filters__text icon icon-${target.name}">${target.value}</div>
+  <button class="filters__btn icon icon-remove"></button>
+</li>`)
+}
+
+
+// function updateFiltersItems() {
+//   const allFiltersByParticipants = document.querySelectorAll('.js_filterByParticipants');
+//   const allFiltersByType = document.querySelectorAll('.js_filterByType');
+//   const allFilters = [...allFiltersByParticipants, ...allFiltersByType]
+//   console.log(allFilters);
+
+//   filterSettings
+
+//   allFilters.forEach(filter => {
+//     let isTrue = filter.value === filterSettings[filter.name];
+//     isTrue ? addFilterItem(filter) : null
+//   })
+// }
+
 
 
 updateActivityCardList()
 
-function createCard(item) {
+let newActivityObj;
+
+function createNewActivity(item) {
+  console.log(item.type);
+  newActivityObj = {
+    id: Math.floor(Math.random() * 10000),
+    type: item.type,
+    participants: item.participants,
+    activity: item.activity,
+    translate: textTranslated.textContent
+  }
+
   textField.textContent = item.activity;
+  
 };
 
 async function getActivity() {
@@ -36,12 +82,13 @@ async function getActivity() {
   } 
 };
 
+
+
 async function showActivity() {
   const data = await getActivity();
   if (data !== undefined) {
-    console.log((data));
     if (!data.error) {
-      createCard(data);
+      createNewActivity(data);
       activityCard.classList.add('show');
     } else {
       errorCard.classList.remove('hidden');
@@ -61,83 +108,6 @@ function getValueOfInput(arr) {
     }
   });
   return value;
-};
-
-function handlerGetActivity() {
-  btnGetLoading.classList.remove('hidden');
-  btnGetActivity.classList.add('hidden');
-  errorCard.classList.add('hidden');
-  activityCard.classList.remove('show'); 
-  activityCardContent.classList.remove('hidden'); 
-  btnAddToList.removeAttribute('disabled');
-  btnAddToList.textContent = 'Add to my list';
- 
-  let numberOfPart = getValueOfInput(participants);
-  let typeOfActivity = getValueOfInput(activity);
-  
-  if (typeOfActivity === 'all') {
-    activityAPI = `http://www.boredapi.com/api/activity?participants=${numberOfPart}`;
-  } else {
-    activityAPI = `http://www.boredapi.com/api/activity?participants=${numberOfPart}&type=${typeOfActivity}`;
-  };
-  getActivity();
-  showActivity();
-  
-};
-
-async function showActivity() {
-  const data = await getActivity();
-  if (data !== undefined) {
-    if (!data.error) {
-      createCard(data);
-      activityCard.classList.add('show');
-    } else {
-      errorCard.classList.remove('hidden');
-      errorCard.firstElementChild.textContent = 'За вашим запитом нічого не знайдено';
-    }  
-  }
-  btnGetLoading.classList.add('hidden');
-  btnGetActivity.classList.remove('hidden');
-};
-
-function handlerGetTranslate() {
-  const url = 'https://translate-plus.p.rapidapi.com/translate';
-  const options = {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'X-RapidAPI-Key': '1e81c5136bmshdf4cf14e295057cp17d4e3jsn705f20333367',
-      'X-RapidAPI-Host': 'translate-plus.p.rapidapi.com'
-    },
-    body: JSON.stringify({
-      text: `${textField.textContent}`,
-      source: 'en',
-      target: 'uk'
-    })
-  };
-
-  function createTranslateText(text) {
-    textTranslated.classList.remove('hidden');
-    textTranslated.textContent = text;
-  };
-
-  async function getTransleate() {
-    try {
-      const response = await fetch(url, options);
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  async function showTranslateText() {
-    const data = await getTransleate();
-    createTranslateText(data.translations.translation);
-  };
-
-  getTransleate();
-  showTranslateText() 
 };
 
 function creativeImage(item) {
@@ -192,24 +162,11 @@ function getImagesFromAPI() {
   showImages();
 }
 
-function createActivityCard() {
-  const activityObj = {
-    id: Math.floor(Math.random() * 10000),
-    type: getValueOfInput(activity),
-    participants: getValueOfInput(participants),
-    text: textField.textContent,
-    translate: textTranslated.textContent
-  }
-  console.log(activityObj.translate.length);
-  return activityObj;
-};
-
 function updateLocalStorage(items) {
   localStorage.setItem('allActivity', JSON.stringify(items));
 };
 
 function updateActivityCardList() {
-  console.log(allActivities);
   rightSide.classList.remove('hidden');
   activityCardList.innerHTML = '';
   allActivities.forEach(el => {
@@ -227,26 +184,15 @@ function checkOfTranslate(item) {
   return result;
 };
 
-// function checkOfImages(item) {
-//   let result;
-//   if (item.images.length > 0) {
-//     result = '<button type="button" class="icon icon-images activity-action action-images" title="show images"></button>'
-//   } else {
-//     result = '';
-//   }
-//   return result;
-// };
-
 function addActivityOnPage(item) {
-
   activityCardList.insertAdjacentHTML('beforeend', `
     <li class="activity-item ${item.type}"  id=${item.id}>
         
       <div class="activity-data">
-          <button type="button" class="js_filterByType icon icon-type" title="sort by activity type">
+          <button type="button" class="js_filterByType icon icon-type" title="sort by activity type" name = 'type' value = ${item.type}>
             ${item.type}
           </button>
-          <button type="button" class="js_filterByParticipants icon icon-participants" title="sort by participants">
+          <button type="button" class="js_filterByParticipants icon icon-participants" title="sort by participants" name = 'participants' value = ${item.participants}>
             ${item.participants}
           </button>
       </div>
@@ -258,24 +204,91 @@ function addActivityOnPage(item) {
         </button>
       </div>
       <div class="activity-name">
-        ${item.text}
+        ${item.activity}
       </div>
 
     </li>
   `)
 }
 
+function clearActivityCardContent(){
+  textTranslated.textContent = '';
+  textTranslated.classList.add('hidden');
+  btnGetLoading.classList.remove('hidden');
+  btnGetActivity.classList.add('hidden');
+  errorCard.classList.add('hidden');
+  activityCard.classList.remove('show'); 
+  activityCardContent.classList.remove('hidden'); 
+  btnAddToList.removeAttribute('disabled');
+  btnAddToList.textContent = 'Add to my list';
+};
+
+function handlerGetActivity() {
+  clearActivityCardContent();
+  let numberOfPart = getValueOfInput(participants);
+  let typeOfActivity = getValueOfInput(activity);
+  
+  if (typeOfActivity === 'all') {
+    activityAPI = `http://www.boredapi.com/api/activity?participants=${numberOfPart}`;
+  } else {
+    activityAPI = `http://www.boredapi.com/api/activity?participants=${numberOfPart}&type=${typeOfActivity}`;
+  };
+  getActivity();
+  showActivity(); 
+};
+
+function handlerGetTranslate() {
+  const url = 'https://translate-plus.p.rapidapi.com/translate';
+  const options = {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'X-RapidAPI-Key': '1e81c5136bmshdf4cf14e295057cp17d4e3jsn705f20333367',
+      'X-RapidAPI-Host': 'translate-plus.p.rapidapi.com'
+    },
+    body: JSON.stringify({
+      text: `${textField.textContent}`,
+      source: 'en',
+      target: 'uk'
+    })
+  };
+
+  function createTranslateText(text) {
+    textTranslated.classList.remove('hidden');
+    textTranslated.textContent = text;
+
+  };
+
+  async function getTransleate() {
+    try {
+      const response = await fetch(url, options);
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  async function showTranslateText() {
+    const data = await getTransleate();
+    createTranslateText(data.translations.translation);
+  };
+
+  getTransleate();
+  showTranslateText();
+};
+
 function handlerAddToList(targetBtn) {
   document.querySelector('.activity-card__content').classList.add('hidden');
-    btnGetActivity.removeAttribute('disabled')
-    targetBtn.setAttribute('disabled', true);
-    targetBtn.textContent = 'Added';
-    rightSide.classList.remove('hidden');
-    const newActivity = createActivityCard();
-    allActivities.push(newActivity);
-    updateLocalStorage(allActivities);
-    console.log(newActivity);
-    addActivityOnPage(newActivity);
+  btnGetActivity.removeAttribute('disabled')
+  targetBtn.setAttribute('disabled', true);
+  targetBtn.textContent = 'Added';
+  rightSide.classList.remove('hidden');
+  newActivityObj.translate = textTranslated.textContent;
+  allActivities.push(newActivityObj);
+    
+  updateLocalStorage(allActivities);
+  updateActivityCardList();
 };
 
 function removeActivity(idAct) {
@@ -283,6 +296,13 @@ function removeActivity(idAct) {
   updateLocalStorage(allActivities);
   updateActivityCardList();
 };
+
+function updateFilters(target) {
+  console.log('click');
+  filterSettings[target.name] = target.value;
+  console.log(filterSettings);
+  localStorage.setItem('filters', JSON.stringify(filterSettings));
+}
 
 document.addEventListener('click', (e) => {
   const target = e.target;
@@ -295,20 +315,29 @@ document.addEventListener('click', (e) => {
   };
 
   if (target.classList.contains('js_getImages')) {
-    document.querySelector('.js_getImages').classList.add('hidden');
-    document.querySelector('.js_loadingImages').classList.remove('hidden');
-    document.querySelector('.js_addToList').setAttribute('disabled', true);
-    getImagesFromAPI();
+    
   };
 
   if (target.classList.contains('js_addToList')) { 
     handlerAddToList(target);
+    console.log(allActivities);
+    
   };
 
   if (target.classList.contains('action-remove')) {
     const id = +target.closest('.activity-item').id;
+    console.log(id);
     removeActivity(id);
   };
+
+  if (target.classList.contains('js_filterByType')) {
+    updateFilters(target)
+  };
+
+  if (target.classList.contains('js_filterByParticipants')) {
+    updateFilters(target)   
+  };
+
 
 
 
