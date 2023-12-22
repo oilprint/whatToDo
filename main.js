@@ -21,39 +21,39 @@ const filterSettings =  JSON.parse(localStorage.getItem('filters')) || {
   'search': ''
 };
 
+let newActivityObj;
+
+updateActivityCardList(allActivities);
+updateFiltersItems();
+
 function updateFilters(target) {
+  for (let key in filterSettings) {
+    filterSettings[key] 
+  }
   filterSettings[target.name] = target.value;
   localStorage.setItem('filters', JSON.stringify(filterSettings));
 };
 
-function addFilterItem(target) {
+function addFilterItem(key) {
   document.querySelector('.filters').insertAdjacentHTML('beforeend', `
-  <li class="filters__item" data-filter=${target.name}>
-  <div class="filters__text icon icon-${target.name}">${target.value}</div>
+  <li class="filters__item" data-filter=${key}>
+  <div class="filters__text icon icon-${key}">${filterSettings[key]}</div>
   <button class="filters__btn icon icon-remove"></button>
 </li>`)
+};
+
+
+function updateFiltersItems() {
+  console.log(filterSettings)
+ for (let key in filterSettings) {
+  console.log(filterSettings[key]);
+  if (filterSettings[key].length > 0) {
+    console.log(filterSettings[key]);
+    addFilterItem(key);
+  }
+ }
 }
 
-
-// function updateFiltersItems() {
-//   const allFiltersByParticipants = document.querySelectorAll('.js_filterByParticipants');
-//   const allFiltersByType = document.querySelectorAll('.js_filterByType');
-//   const allFilters = [...allFiltersByParticipants, ...allFiltersByType]
-//   console.log(allFilters);
-
-//   filterSettings
-
-//   allFilters.forEach(filter => {
-//     let isTrue = filter.value === filterSettings[filter.name];
-//     isTrue ? addFilterItem(filter) : null
-//   })
-// }
-
-
-
-updateActivityCardList()
-
-let newActivityObj;
 
 function createNewActivity(item) {
   console.log(item.type);
@@ -166,10 +166,11 @@ function updateLocalStorage(items) {
   localStorage.setItem('allActivity', JSON.stringify(items));
 };
 
-function updateActivityCardList() {
+function updateActivityCardList(arr) {
   rightSide.classList.remove('hidden');
   activityCardList.innerHTML = '';
-  allActivities.forEach(el => {
+  console.log(arr);
+  arr.forEach(el => {
     addActivityOnPage(el)
   })
 }
@@ -331,16 +332,59 @@ document.addEventListener('click', (e) => {
   };
 
   if (target.classList.contains('js_filterByType')) {
-    updateFilters(target)
+     document.querySelector('.filters').innerHTML = '';
+    updateFilters(target);
+    updateFiltersItems();
+    console.log(allActivities);
+    const type = sortByType(allActivities);
+    console.log(type);
+    updateActivityCardList(type)
   };
 
   if (target.classList.contains('js_filterByParticipants')) {
-    updateFilters(target)   
+     document.querySelector('.filters').innerHTML = '';
+    updateFilters(target);
+    updateFiltersItems();   
   };
-
-
-
-
-
-
 });
+
+function sortByType(arr) {
+  let sorted = [];
+  console.log(filterSettings['type']);
+  const sortType = filterSettings['type'];
+  switch (sortType) {
+    case 'education':
+      sorted = arr.filter(activity => activity.type === 'education')
+      break;
+      case 'recreational':
+        console.log('hhhhhhhhhh');
+      sorted = arr.filter(activity => activity.type === 'recreational');
+      break;
+      case 'social':
+      sorted = arr.filter(activity => activity.type === 'social')
+      break;
+      case 'diy':
+      sorted = arr.filter(activity => activity.type === 'diy')
+      break;
+      case 'charity':
+      sorted = arr.filter(activity => activity.type === 'education')
+      break;
+      case 'cooking':
+      sorted = arr.filter(activity => activity.type === 'cooking')
+      break;
+      case 'relaxation':
+      sorted = arr.filter(activity => activity.type === 'relaxation')
+      break;
+      case 'music':
+      sorted = arr.filter(activity => activity.type === 'music')
+      break;
+      case 'busywork':
+      sorted = arr.filter(activity => activity.type === 'busywork')
+      break;
+
+    default:
+      sorted = arr;
+      break;
+  }
+  return sorted;
+}
