@@ -17,22 +17,14 @@ let allActivities = JSON.parse(localStorage.getItem('allActivity')) || [];
 
 const filterSettings =  JSON.parse(localStorage.getItem('filters')) || {
   'participants': '',
-  'type': '',
-  'search': ''
+  'type': ''
 };
 
 let newActivityObj;
 
 updateActivityCardList(allActivities);
 updateFiltersItems();
-
-function updateFilters(target) {
-  for (let key in filterSettings) {
-    filterSettings[key] 
-  }
-  filterSettings[target.name] = target.value;
-  localStorage.setItem('filters', JSON.stringify(filterSettings));
-};
+filterAllActivity();
 
 function addFilterItem(key) {
   document.querySelector('.filters').insertAdjacentHTML('beforeend', `
@@ -42,18 +34,14 @@ function addFilterItem(key) {
 </li>`)
 };
 
-
 function updateFiltersItems() {
-  console.log(filterSettings)
+  document.querySelector('.filters').innerHTML = '';
  for (let key in filterSettings) {
-  console.log(filterSettings[key]);
   if (filterSettings[key].length > 0) {
-    console.log(filterSettings[key]);
     addFilterItem(key);
   }
  }
 }
-
 
 function createNewActivity(item) {
   console.log(item.type);
@@ -81,8 +69,6 @@ async function getActivity() {
     console.error(error.message);
   } 
 };
-
-
 
 async function showActivity() {
   const data = await getActivity();
@@ -289,68 +275,37 @@ function handlerAddToList(targetBtn) {
   allActivities.push(newActivityObj);
     
   updateLocalStorage(allActivities);
-  updateActivityCardList();
+  updateActivityCardList(allActivities);
 };
 
 function removeActivity(idAct) {
   allActivities = allActivities.filter(item => item.id !== idAct);
   updateLocalStorage(allActivities);
-  updateActivityCardList();
+  updateActivityCardList(allActivities);
 };
 
-function updateFilters(target) {
-  console.log('click');
+function updateFiltersLocalStorage(target) {
   filterSettings[target.name] = target.value;
-  console.log(filterSettings);
   localStorage.setItem('filters', JSON.stringify(filterSettings));
-}
+};
 
-document.addEventListener('click', (e) => {
-  const target = e.target;
-  if (target.classList.contains('js_getActivity')) { 
-    handlerGetActivity();
-  };
+function removeFilter(target) {
+  let key = target.closest('.filters__item').getAttribute('data-filter');
+  console.log(key);
+  console.log('key');
+  filterSettings[key] = '';
+  console.log(filterSettings);
+};
 
-  if (target.classList.contains('js_translate')) {
-    handlerGetTranslate();
-  };
-
-  if (target.classList.contains('js_getImages')) {
-    
-  };
-
-  if (target.classList.contains('js_addToList')) { 
-    handlerAddToList(target);
-    console.log(allActivities);
-    
-  };
-
-  if (target.classList.contains('action-remove')) {
-    const id = +target.closest('.activity-item').id;
-    console.log(id);
-    removeActivity(id);
-  };
-
-  if (target.classList.contains('js_filterByType')) {
-     document.querySelector('.filters').innerHTML = '';
-    updateFilters(target);
-    updateFiltersItems();
-    console.log(allActivities);
-    const type = sortByType(allActivities);
-    console.log(type);
-    updateActivityCardList(type)
-  };
-
-  if (target.classList.contains('js_filterByParticipants')) {
-     document.querySelector('.filters').innerHTML = '';
-    updateFilters(target);
-    updateFiltersItems();   
-  };
-});
+function filterAllActivity() {
+  const typeArr = sortByType(allActivities);
+  const participantsArr = sortByParticipants(typeArr);
+  const searchArr = sortBySearchBlur(participantsArr);
+  updateActivityCardList(searchArr);
+};
 
 function sortByType(arr) {
   let sorted = [];
-  console.log(filterSettings['type']);
   const sortType = filterSettings['type'];
   switch (sortType) {
     case 'education':
@@ -387,4 +342,108 @@ function sortByType(arr) {
       break;
   }
   return sorted;
-}
+};
+
+function sortByParticipants(arr) {
+  let sorted = [];
+  console.log(filterSettings['participants']);
+  const sortParticipants = filterSettings['participants'];
+  switch (sortParticipants) {
+    case '1':
+      sorted = arr.filter(activity => activity.participants === 1)
+      break;
+      case '2':
+        console.log('hhhhhhhhhh');
+      sorted = arr.filter(activity => activity.participants === 2);
+      break;
+      case '3':
+      sorted = arr.filter(activity => activity.participants === 3)
+      break;
+      case '4':
+      sorted = arr.filter(activity => activity.participants === 4)
+      break;
+      case '5':
+      sorted = arr.filter(activity => activity.participants === 5)
+      break;
+
+    default:
+      sorted = arr;
+      break;
+  }
+  return sorted;
+};
+
+function sortBySearch() {
+  const searchInput = document.querySelector('.search__input');
+  const typeArr = sortByType(allActivities);
+  const participantsArr = sortByParticipants(typeArr);
+  let sorted = [];
+  sorted = typeArr.filter(item => item.activity.toLowerCase().startsWith(searchInput.value.toLowerCase()));
+  updateActivityCardList(sorted);
+};
+
+function sortBySearchBlur(arr) {
+  let sorted = [];
+  const sortType = filterSettings['search'];
+  sorted = arr.filter(item => item.activity.toLowerCase().startsWith(sortType.toLowerCase()));
+
+  return sorted;
+};
+
+document.addEventListener('click', (e) => {
+  const target = e.target;
+  if (target.classList.contains('js_getActivity')) { 
+    handlerGetActivity();
+  };
+
+  if (target.classList.contains('js_translate')) {
+    handlerGetTranslate();
+  };
+
+  if (target.classList.contains('action-translate')) {
+    
+  };
+
+  if (target.classList.contains('js_addToList')) { 
+    handlerAddToList(target);
+  };
+
+  if (target.classList.contains('action-remove')) {
+    const id = +target.closest('.activity-item').id;
+    console.log(id);
+    removeActivity(id);
+  };
+
+  if (target.classList.contains('js_filterByType')) {
+     
+    updateFiltersLocalStorage(target);
+    updateFiltersItems();
+    filterAllActivity();
+  };
+
+  if (target.classList.contains('js_filterByParticipants')) {
+    updateFiltersLocalStorage(target);
+    updateFiltersItems();   
+    filterAllActivity();
+  };
+
+  if (target.classList.contains('filters__btn')) {
+    removeFilter(target);
+    localStorage.setItem('filters', JSON.stringify(filterSettings));
+    updateFiltersItems(); 
+    filterAllActivity();
+  };
+});
+
+document.querySelector('.search__input').addEventListener('input', (e) => {
+  sortBySearch();
+});
+
+document.querySelector('.search__input').addEventListener('blur', (e) => {
+  const searchInput = document.querySelector('.search__input');
+  filterSettings.search = searchInput.value;
+  localStorage.setItem('filters', JSON.stringify(filterSettings));
+  updateFiltersItems();
+  filterAllActivity();
+});
+
