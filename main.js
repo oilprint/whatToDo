@@ -31,7 +31,6 @@ function updateActivityCardList(arr) {
   arr.forEach(el => {
     addActivityOnPage(el)
   }) 
-  console.log(arr.length);
   if (arr.length === 0) {
     rightSide.classList.add('hidden');
     
@@ -112,57 +111,6 @@ function getValueOfInput(arr) {
   return value;
 };
 
-function creativeImage(item) {
-  console.dir(item);
-  imageList.insertAdjacentHTML('beforeend', `
-  <a href=${item} target="_blank">
-  <img src=${item} class="image-result aspect-video object-cover rounded-md">
-  </a>
-`)
-};
-
-function getImagesFromAPI() {
-  console.log(textField.textContent);
-  const url = `https://image-search19.p.rapidapi.com/v2/?q=${textField.textContent}=en`;
-  const options = {
-    method: 'GET',
-    headers: {
-      'X-RapidAPI-Key': '1e81c5136bmshdf4cf14e295057cp17d4e3jsn705f20333367',
-      'X-RapidAPI-Host': 'image-search19.p.rapidapi.com'
-    }
-  };
-  
-  async function getImages() {
-    try {
-      const response = await fetch(url, options);
-      if (!response.ok) {
-        throw new Error('Помилка в пошуку зображень');
-      }
-      const result = await response.json();
-      console.log('result');
-        console.log(result.response.images);
-      return result.response.images;
-    } catch(error) {
-      console.error(error.message);
-    } 
-  }
-
-  async function showImages() {
-    const data = await getImages();
-    if (data !== undefined) {
-      console.log(data);
-      const newImagesList = data.map(item => item.image.url);
-      console.log(newImagesList);
-      newImagesList.map(item => {
-        creativeImage(item)
-      });
-    }
-    document.querySelector('.js_loadingImages').classList.add('hidden');
-    document.querySelector('.images').classList.add('loading');
-  }
-
-  showImages();
-}
 
 function updateLocalStorage(items) {
   localStorage.setItem('allActivity', JSON.stringify(items));
@@ -291,8 +239,14 @@ function handlerAddToList(targetBtn) {
   targetBtn.textContent = 'Added';
   rightSide.classList.remove('hidden');
   newActivityObj.translate = textTranslated.textContent;
+  const images = document.querySelector('.images');
+  console.log(images);
+  const imagesArr = images.querySelectorAll('.image-link');
+  const linksArr = [...imagesArr].map(item => item.href);
+  console.log(linksArr);
+  newActivityObj.images = linksArr;
+  console.log(newActivityObj);
   allActivities.push(newActivityObj);
-    
   updateLocalStorage(allActivities);
   updateActivityCardList(allActivities);
 };
@@ -375,7 +329,6 @@ function sortByType(arr) {
 
 function sortByParticipants(arr) {
   let sorted = [];
-  console.log(filterSettings['participants']);
   const sortParticipants = filterSettings['participants'];
   switch (sortParticipants) {
     case '1':
@@ -434,6 +387,16 @@ document.addEventListener('click', (e) => {
     handlerGetTranslate();
   };
 
+  if (target.classList.contains('js_getImages')) {
+    target.classList.add('hidden');
+    document.querySelector('.js_loadingImages').classList.remove('hidden');
+    document.querySelector('.images').classList.add('loading');
+    btnAddToList.setAttribute('disabled', true);
+    getImagesFromAPI();
+    document.querySelector('.js_loadingImages').classList.add('hidden');
+     
+  };
+
   if (target.classList.contains('action-translate')) {
     showTranslate(target);
   };
@@ -481,3 +444,61 @@ document.querySelector('.search__input').addEventListener('blur', (e) => {
   searchInput.value = '';
 });
 
+
+
+function creativeImage(item) {
+  console.log(item);
+  imageList.insertAdjacentHTML('beforeend', `
+  <a class="image-link" href='${item}' target="_blank">
+  <img src='${item}' class="image-result aspect-video object-cover rounded-md">
+  </a>
+`)
+};
+
+
+function getImagesFromAPI() {
+  console.log(textField.textContent);
+  const url = `https://corsproxy.io/?https://image-search19.p.rapidapi.com/v2/?q=${textField.textContent}=en`;
+  const options = {
+    method: 'GET',
+    headers: {
+      'X-RapidAPI-Key': '1e81c5136bmshdf4cf14e295057cp17d4e3jsn705f20333367',
+      'X-RapidAPI-Host': 'image-search19.p.rapidapi.com'
+    }
+  };
+  
+  async function getImages() {
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error('Помилка в пошуку зображень');
+      }
+      const result = await response.json();
+      return result.response.images;
+    } catch(error) {
+      console.error(error.message);
+    } 
+  }
+
+  async function showImages() {
+    let imagesArr = [];
+    const data = await getImages();
+    if (data !== undefined) {
+      console.log(data);
+      let newImagesList = [];
+      newImagesList = data.map(item => item.image.url);
+       document.querySelector('.images').classList.remove('loading');
+       imagesArr = newImagesList.slice(0, 10);
+       imagesArr.forEach(item => {
+        creativeImage(item)
+       })
+      btnAddToList.removeAttribute('disabled'); 
+    }
+    document.querySelector('.js_loadingImages').classList.add('hidden');
+    document.querySelector('.images').classList.remove('loading');
+    return imagesArr;
+  }
+
+  showImages();
+  
+}
