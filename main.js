@@ -26,6 +26,25 @@ updateActivityCardList(allActivities);
 updateFiltersItems();
 filterAllActivity();
 
+function updateActivityCardList(arr) {
+  activityCardList.innerHTML = '';
+  arr.forEach(el => {
+    addActivityOnPage(el)
+  }) 
+  console.log(arr.length);
+  if (arr.length === 0) {
+    rightSide.classList.add('hidden');
+    
+  } else {
+    rightSide.classList.remove('hidden');
+  }
+};
+
+function clearRightSide(){
+  rightSide.classList.add('hidden');
+  activityCard.classList.remove('show');
+};
+
 function addFilterItem(key) {
   document.querySelector('.filters').insertAdjacentHTML('beforeend', `
   <li class="filters__item" data-filter=${key}>
@@ -36,15 +55,14 @@ function addFilterItem(key) {
 
 function updateFiltersItems() {
   document.querySelector('.filters').innerHTML = '';
- for (let key in filterSettings) {
-  if (filterSettings[key].length > 0) {
-    addFilterItem(key);
-  }
- }
-}
+  for (let key in filterSettings) {
+    if (filterSettings[key].length > 0) {
+      addFilterItem(key);
+    }
+  };
+};
 
 function createNewActivity(item) {
-  console.log(item.type);
   newActivityObj = {
     id: Math.floor(Math.random() * 10000),
     type: item.type,
@@ -52,9 +70,7 @@ function createNewActivity(item) {
     activity: item.activity,
     translate: textTranslated.textContent
   }
-
-  textField.textContent = item.activity;
-  
+  textField.textContent = item.activity; 
 };
 
 async function getActivity() {
@@ -152,15 +168,6 @@ function updateLocalStorage(items) {
   localStorage.setItem('allActivity', JSON.stringify(items));
 };
 
-function updateActivityCardList(arr) {
-  rightSide.classList.remove('hidden');
-  activityCardList.innerHTML = '';
-  console.log(arr);
-  arr.forEach(el => {
-    addActivityOnPage(el)
-  })
-}
-
 function checkOfTranslate(item) {
   let result;
   if (item.translate.length > 0) {
@@ -170,6 +177,16 @@ function checkOfTranslate(item) {
   }
   return result;
 };
+
+function addTranslateToCard(item) {
+  let result;
+  if (item.translate.length > 0) {
+    result = `<p class="translated-text hidden">${item.translate}</p>`
+  } else {
+    result = '';
+  }
+  return result;
+}
 
 function addActivityOnPage(item) {
   activityCardList.insertAdjacentHTML('beforeend', `
@@ -193,6 +210,8 @@ function addActivityOnPage(item) {
       <div class="activity-name">
         ${item.activity}
       </div>
+       ${addTranslateToCard(item)}
+      
 
     </li>
   `)
@@ -282,6 +301,16 @@ function removeActivity(idAct) {
   allActivities = allActivities.filter(item => item.id !== idAct);
   updateLocalStorage(allActivities);
   updateActivityCardList(allActivities);
+  console.log(allActivities.length);
+  if (allActivities.length === 0) {
+    activityCard.classList.remove('show');
+    for (let key in filterSettings) {
+      filterSettings[key] = '';
+  }
+  console.log(filterSettings);
+    localStorage.setItem('filters', JSON.stringify(filterSettings));
+  }
+  
 };
 
 function updateFiltersLocalStorage(target) {
@@ -390,6 +419,11 @@ function sortBySearchBlur(arr) {
   return sorted;
 };
 
+function showTranslate(target) {
+  const tranlateText = target.closest('.activity-item').querySelector('.translated-text');
+  tranlateText.classList.toggle('hidden');
+};
+
 document.addEventListener('click', (e) => {
   const target = e.target;
   if (target.classList.contains('js_getActivity')) { 
@@ -401,7 +435,7 @@ document.addEventListener('click', (e) => {
   };
 
   if (target.classList.contains('action-translate')) {
-    
+    showTranslate(target);
   };
 
   if (target.classList.contains('js_addToList')) { 
@@ -410,7 +444,6 @@ document.addEventListener('click', (e) => {
 
   if (target.classList.contains('action-remove')) {
     const id = +target.closest('.activity-item').id;
-    console.log(id);
     removeActivity(id);
   };
 
@@ -445,5 +478,6 @@ document.querySelector('.search__input').addEventListener('blur', (e) => {
   localStorage.setItem('filters', JSON.stringify(filterSettings));
   updateFiltersItems();
   filterAllActivity();
+  searchInput.value = '';
 });
 
