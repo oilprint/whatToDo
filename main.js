@@ -67,7 +67,8 @@ function createNewActivity(item) {
     type: item.type,
     participants: item.participants,
     activity: item.activity,
-    translate: textTranslated.textContent
+    translate: textTranslated.textContent,
+    images: ''
   }
   textField.textContent = item.activity; 
 };
@@ -111,7 +112,6 @@ function getValueOfInput(arr) {
   return value;
 };
 
-
 function updateLocalStorage(items) {
   localStorage.setItem('allActivity', JSON.stringify(items));
 };
@@ -120,6 +120,16 @@ function checkOfTranslate(item) {
   let result;
   if (item.translate.length > 0) {
     result = '<button type="button" class="icon icon-translate activity-action action-translate" title="show/hide translation"></button>'
+  } else {
+    result = '';
+  }
+  return result;
+};
+
+function checkOfImages(item) {
+  let result;
+  if (item.images.length > 0) {
+    result = '<button type="button" class="icon icon-images activity-action action-images" title="show images"></button>'
   } else {
     result = '';
   }
@@ -150,6 +160,7 @@ function addActivityOnPage(item) {
       </div>
       <div class="activity-actions">
         ${checkOfTranslate(item)}
+        ${checkOfImages(item)}
         
         <button button class="icon icon-remove activity-action action-remove" type="button" title="remove it">
           <span class="sr-only">Remove it</span>
@@ -167,6 +178,8 @@ function addActivityOnPage(item) {
 
 function clearActivityCardContent(){
   textTranslated.textContent = '';
+  imageList.innerHTML = '';
+  document.querySelector('.js_getImages').classList.remove('hidden');
   textTranslated.classList.add('hidden');
   btnGetLoading.classList.remove('hidden');
   btnGetActivity.classList.add('hidden');
@@ -366,9 +379,14 @@ function sortBySearch() {
 
 function sortBySearchBlur(arr) {
   let sorted = [];
+  
   const sortType = filterSettings['search'];
-  sorted = arr.filter(item => item.activity.toLowerCase().startsWith(sortType.toLowerCase()));
-
+  if (sortType !== undefined) {
+    sorted = arr.filter(item => item.activity.toLowerCase().startsWith(sortType.toLowerCase()));
+  } else {
+    sorted = arr;
+  }
+  
   return sorted;
 };
 
@@ -390,11 +408,10 @@ document.addEventListener('click', (e) => {
   if (target.classList.contains('js_getImages')) {
     target.classList.add('hidden');
     document.querySelector('.js_loadingImages').classList.remove('hidden');
-    document.querySelector('.images').classList.add('loading');
+    imageList.classList.add('loading');
     btnAddToList.setAttribute('disabled', true);
     getImagesFromAPI();
-    document.querySelector('.js_loadingImages').classList.add('hidden');
-     
+      
   };
 
   if (target.classList.contains('action-translate')) {
@@ -410,8 +427,7 @@ document.addEventListener('click', (e) => {
     removeActivity(id);
   };
 
-  if (target.classList.contains('js_filterByType')) {
-     
+  if (target.classList.contains('js_filterByType')) {   
     updateFiltersLocalStorage(target);
     updateFiltersItems();
     filterAllActivity();
@@ -444,8 +460,6 @@ document.querySelector('.search__input').addEventListener('blur', (e) => {
   searchInput.value = '';
 });
 
-
-
 function creativeImage(item) {
   console.log(item);
   imageList.insertAdjacentHTML('beforeend', `
@@ -454,7 +468,6 @@ function creativeImage(item) {
   </a>
 `)
 };
-
 
 function getImagesFromAPI() {
   console.log(textField.textContent);
@@ -472,7 +485,7 @@ function getImagesFromAPI() {
       const response = await fetch(url, options);
       if (!response.ok) {
         throw new Error('Помилка в пошуку зображень');
-      }
+      } 
       const result = await response.json();
       return result.response.images;
     } catch(error) {
@@ -484,21 +497,20 @@ function getImagesFromAPI() {
     let imagesArr = [];
     const data = await getImages();
     if (data !== undefined) {
-      console.log(data);
       let newImagesList = [];
       newImagesList = data.map(item => item.image.url);
        document.querySelector('.images').classList.remove('loading');
        imagesArr = newImagesList.slice(0, 10);
+     
        imagesArr.forEach(item => {
         creativeImage(item)
        })
       btnAddToList.removeAttribute('disabled'); 
+      document.querySelector('.js_loadingImages').classList.add('hidden'); 
     }
     document.querySelector('.js_loadingImages').classList.add('hidden');
     document.querySelector('.images').classList.remove('loading');
     return imagesArr;
   }
-
-  showImages();
-  
-}
+  showImages(); 
+};
