@@ -200,6 +200,7 @@ function handlerGetActivity() {
   } else {
     activityAPI = `http://www.boredapi.com/api/activity?participants=${numberOfPart}&type=${typeOfActivity}`;
   };
+  console.log(activityAPI);
   getActivity();
   showActivity(); 
 };
@@ -223,7 +224,6 @@ function handlerGetTranslate() {
   function createTranslateText(text) {
     textTranslated.classList.remove('hidden');
     textTranslated.textContent = text;
-
   };
 
   async function getTransleate() {
@@ -246,35 +246,34 @@ function handlerGetTranslate() {
 };
 
 function handlerAddToList(targetBtn) {
-  document.querySelector('.activity-card__content').classList.add('hidden');
+  activityCard.classList.add('hidden');
   btnGetActivity.removeAttribute('disabled')
   targetBtn.setAttribute('disabled', true);
   targetBtn.textContent = 'Added';
   rightSide.classList.remove('hidden');
   newActivityObj.translate = textTranslated.textContent;
-  const images = document.querySelector('.images');
-  console.log(images);
+  console.log(textField.textContent);
+  const images = document.querySelector('.images'); 
   const imagesArr = images.querySelectorAll('.image-link');
-  const linksArr = [...imagesArr].map(item => item.href);
-  console.log(linksArr);
-  newActivityObj.images = linksArr;
-  console.log(newActivityObj);
-  allActivities.push(newActivityObj);
-  updateLocalStorage(allActivities);
-  updateActivityCardList(allActivities);
+  const linksArr = [...imagesArr].map(item => item.href); 
+  newActivityObj.images = linksArr; 
+  if (!allActivities.some(item => item.activity === textField.textContent)) {
+    allActivities.push(newActivityObj);
+    updateLocalStorage(allActivities);
+    updateActivityCardList(allActivities);
+  }
+  
 };
 
 function removeActivity(idAct) {
   allActivities = allActivities.filter(item => item.id !== idAct);
   updateLocalStorage(allActivities);
   updateActivityCardList(allActivities);
-  console.log(allActivities.length);
   if (allActivities.length === 0) {
     activityCard.classList.remove('show');
     for (let key in filterSettings) {
       filterSettings[key] = '';
   }
-  console.log(filterSettings);
     localStorage.setItem('filters', JSON.stringify(filterSettings));
   }
   
@@ -287,10 +286,7 @@ function updateFiltersLocalStorage(target) {
 
 function removeFilter(target) {
   let key = target.closest('.filters__item').getAttribute('data-filter');
-  console.log(key);
-  console.log('key');
-  filterSettings[key] = '';
-  console.log(filterSettings);
+  filterSettings[key] = ''; 
 };
 
 function filterAllActivity() {
@@ -308,7 +304,6 @@ function sortByType(arr) {
       sorted = arr.filter(activity => activity.type === 'education')
       break;
       case 'recreational':
-        console.log('hhhhhhhhhh');
       sorted = arr.filter(activity => activity.type === 'recreational');
       break;
       case 'social':
@@ -348,7 +343,6 @@ function sortByParticipants(arr) {
       sorted = arr.filter(activity => activity.participants === 1)
       break;
       case '2':
-        console.log('hhhhhhhhhh');
       sorted = arr.filter(activity => activity.participants === 2);
       break;
       case '3':
@@ -368,14 +362,13 @@ function sortByParticipants(arr) {
   return sorted;
 };
 
-function sortBySearch() {
-  const searchInput = document.querySelector('.search__input');
-  const typeArr = sortByType(allActivities);
-  const participantsArr = sortByParticipants(typeArr);
-  let sorted = [];
-  sorted = typeArr.filter(item => item.activity.toLowerCase().startsWith(searchInput.value.toLowerCase()));
-  updateActivityCardList(sorted);
-};
+// function sortBySearch() {
+//   const searchInput = document.querySelector('.search__input');
+//   const typeArr = sortByType(allActivities);
+//   const participantsArr = sortByParticipants(typeArr);
+//   let sorted = [];
+
+// };
 
 function sortBySearchBlur(arr) {
   let sorted = [];
@@ -386,7 +379,6 @@ function sortBySearchBlur(arr) {
   } else {
     sorted = arr;
   }
-  
   return sorted;
 };
 
@@ -395,31 +387,32 @@ function showTranslate(target) {
   tranlateText.classList.toggle('hidden');
 };
 
+const getActivityBtn = document.querySelector('.js_getActivity');
+const getTranslateBtn = document.querySelector('.js_translate');
+const getImageBtn = document.querySelector('.js_getImages');
+const searchInput = document.querySelector('.search__input');
+
+getActivityBtn.addEventListener('click', async (e) => {
+  const target = e.target;
+  activityCard.classList.remove('hidden');
+  getImageBtn.textContent = 'Load Images';
+  handlerGetActivity();
+});
+
+getTranslateBtn.addEventListener('click', async (e) => {
+  const target = e.target;
+  handlerGetTranslate();
+});
+
 document.addEventListener('click', (e) => {
   const target = e.target;
-  if (target.classList.contains('js_getActivity')) { 
-    handlerGetActivity();
-  };
-
-  if (target.classList.contains('js_translate')) {
-    handlerGetTranslate();
-  };
-
-  if (target.classList.contains('js_getImages')) {
-    target.classList.add('hidden');
-    document.querySelector('.js_loadingImages').classList.remove('hidden');
-    imageList.classList.add('loading');
-    btnAddToList.setAttribute('disabled', true);
-    getImagesFromAPI();
-      
-  };
-
   if (target.classList.contains('action-translate')) {
     showTranslate(target);
   };
 
   if (target.classList.contains('js_addToList')) { 
     handlerAddToList(target);
+    target.closest('.activity-card').classList.add('hidden');
   };
 
   if (target.classList.contains('action-remove')) {
@@ -447,12 +440,20 @@ document.addEventListener('click', (e) => {
   };
 });
 
-document.querySelector('.search__input').addEventListener('input', (e) => {
-  sortBySearch();
+searchInput.addEventListener('input', (e) => {
+  const typeArr = sortByType(allActivities);
+  const participantsArr = sortByParticipants(typeArr);
+  let sorted = [];
+  participantsArr.forEach(item => console.log(typeof(item.activity)))
+  sorted = typeArr.filter(item => item.activity.toLowerCase().startsWith(searchInput.value.toLowerCase()));
+
+  activityCardList.innerHTML = '';
+  sorted.forEach(el => {
+  addActivityOnPage(el)
+  })
 });
 
-document.querySelector('.search__input').addEventListener('blur', (e) => {
-  const searchInput = document.querySelector('.search__input');
+searchInput.addEventListener('blur', (e) => {
   filterSettings.search = searchInput.value;
   localStorage.setItem('filters', JSON.stringify(filterSettings));
   updateFiltersItems();
@@ -461,13 +462,124 @@ document.querySelector('.search__input').addEventListener('blur', (e) => {
 });
 
 function creativeImage(item) {
-  console.log(item);
   imageList.insertAdjacentHTML('beforeend', `
   <a class="image-link" href='${item}' target="_blank">
   <img src='${item}' class="image-result aspect-video object-cover rounded-md">
   </a>
 `)
 };
+
+const responseErrorsTypes = {
+  noImages: 'Images was not found. Please try again!',
+  responseError: 'There is a problem with your response or the server. Please check it out!',
+  defaultError: 'Oops, there was error :((',
+}
+
+async function searchImages(searchText) {
+  const imagesAPIUrl = `https://duckduckgo10.p.rapidapi.com/search/images?term=${searchText}&region=ua-uk&safeSearch=off`;
+  const options = {
+    method: 'GET',
+    headers: {
+      'X-RapidAPI-Key': '1e81c5136bmshdf4cf14e295057cp17d4e3jsn705f20333367',
+		'X-RapidAPI-Host': 'duckduckgo10.p.rapidapi.com'
+    }
+  }
+
+  try {
+    const response = await fetch(imagesAPIUrl, options);
+    const data = await response.json();
+
+    if (data.error) {
+      return responseErrorsTypes.noImages; 
+    }
+    if (!response.ok) {
+      return responseErrorsTypes.responseError;
+    }
+
+    return data.data;
+  } catch (error) {
+    return responseErrorsTypes.defaultError;
+  }
+};
+
+function getImagesFromArray(originArray, count = 10) {
+  return originArray.slice(0, count);
+};
+
+function createImage(url) {
+  return (`
+    <a class="image-link" href='${url}' target="_blank">
+    <img src='${url}' class="image-result aspect-video object-cover rounded-md">
+    </a>
+  `)
+};
+
+// function addImagesOnPage(imagesArr) {
+//   imageList.classList.add('loading');
+//   let loadedImagesCounter = 0;
+
+//   function handlerImageLoad(imageUrl) {
+//     const imgElement = newImage();
+//     imgElement.src = imageUrl
+
+//     imgElement.onload = () => {
+//       const newImageLink = createImage(imageUrl);
+
+//       imageList.insertAdjacentHTML('beforeend', newImageLink);
+//       loadedImagesCounter++;
+
+//       if (loadedImagesCounter === imagesArr.length) {
+//         imageList.classList.remove('loading');
+//       }
+//     }
+//   }
+  
+//   imagesArr.forEach((image) => handlerImageLoad(image));
+// }
+
+getImageBtn.addEventListener('click', async (e) => {
+  const target = e.target;
+  target.classList.add('hidden');
+  document.querySelector('.js_loadingImages').classList.remove('hidden');
+  imageList.classList.add('loading');
+  getActivityBtn.setAttribute('disabled', true);
+  btnAddToList.setAttribute('disabled', true);
+  
+  const searchResult = await searchImages(textField.textContent);
+
+  try {
+    imageList.innerHTML = '';
+    const searchResult = await searchImages(textField.textContent);
+    btnAddToList.removeAttribute('disabled'); 
+    getActivityBtn.removeAttribute('disabled'); 
+    document.querySelector('.js_loadingImages').classList.add('hidden'); 
+    btnAddToList.classList.remove ('hidden');
+    document.querySelector('.images').classList.remove('loading');
+
+    if (!Array.isArray(searchResult)) {
+      getImageBtn.textContent = 'Try again!';
+      getImageBtn.style.backgroundColor = 'red';
+      console.log('Пошук не дав результатів');
+    } else {
+      getImageBtn.textContent = 'Reload Images';
+      getImageBtn.style.backgroundColor = '';
+      const searchImagesArr = searchResult.map(image =>image.thumbnail);
+      const imagesForOutput = getImagesFromArray(searchImagesArr);
+      // addImagesOnPage(imagesForOutput);
+      imagesForOutput.forEach((imageUrl) => {
+        const newItem = createImage(imageUrl)
+        imageList.insertAdjacentHTML('beforeend', newItem);
+      })
+    }
+
+    
+  } catch (error) {
+    console.log(error);
+  }
+
+
+});
+
 
 function getImagesFromAPI() {
   console.log(textField.textContent);
@@ -501,12 +613,12 @@ function getImagesFromAPI() {
       newImagesList = data.map(item => item.image.url);
        document.querySelector('.images').classList.remove('loading');
        imagesArr = newImagesList.slice(0, 10);
-     
+     btnAddToList.removeAttribute('disabled'); 
+      document.querySelector('.js_loadingImages').classList.add('hidden'); 
        imagesArr.forEach(item => {
         creativeImage(item)
        })
-      btnAddToList.removeAttribute('disabled'); 
-      document.querySelector('.js_loadingImages').classList.add('hidden'); 
+      
     }
     document.querySelector('.js_loadingImages').classList.add('hidden');
     document.querySelector('.images').classList.remove('loading');
