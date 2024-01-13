@@ -170,7 +170,6 @@ function addActivityOnPage(item) {
         ${item.activity}
       </div>
        ${addTranslateToCard(item)}
-      
 
     </li>
   `)
@@ -293,7 +292,11 @@ function filterAllActivity() {
   const typeArr = sortByType(allActivities);
   const participantsArr = sortByParticipants(typeArr);
   const searchArr = sortBySearchBlur(participantsArr);
-  updateActivityCardList(searchArr);
+  // updateActivityCardList(searchArr);
+  activityCardList.innerHTML = '';
+  searchArr.forEach(el => {
+    addActivityOnPage(el)
+  }) 
 };
 
 function sortByType(arr) {
@@ -361,14 +364,6 @@ function sortByParticipants(arr) {
   }
   return sorted;
 };
-
-// function sortBySearch() {
-//   const searchInput = document.querySelector('.search__input');
-//   const typeArr = sortByType(allActivities);
-//   const participantsArr = sortByParticipants(typeArr);
-//   let sorted = [];
-
-// };
 
 function sortBySearchBlur(arr) {
   let sorted = [];
@@ -444,20 +439,21 @@ searchInput.addEventListener('input', (e) => {
   const typeArr = sortByType(allActivities);
   const participantsArr = sortByParticipants(typeArr);
   let sorted = [];
-  participantsArr.forEach(item => console.log(typeof(item.activity)))
-  sorted = typeArr.filter(item => item.activity.toLowerCase().startsWith(searchInput.value.toLowerCase()));
-
+  sorted = participantsArr.filter(item => item.activity.toLowerCase().startsWith(searchInput.value.toLowerCase()));
   activityCardList.innerHTML = '';
-  sorted.forEach(el => {
-  addActivityOnPage(el)
+  sorted.forEach(item => {
+    addActivityOnPage(item)
   })
 });
 
 searchInput.addEventListener('blur', (e) => {
+  let sorted = [];
+  const typeArr = sortByType(allActivities);
+  const participantsArr = sortByParticipants(typeArr);
   filterSettings.search = searchInput.value;
   localStorage.setItem('filters', JSON.stringify(filterSettings));
   updateFiltersItems();
-  filterAllActivity();
+  
   searchInput.value = '';
 });
 
